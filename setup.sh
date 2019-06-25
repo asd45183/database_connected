@@ -33,7 +33,8 @@ cd $base_dir && \
 tar -zxvf $pymongo_need &&\
 tar -zxvf $redis_tar && \
 pip install $redis_need && \
-pip install psycopg2-binary
+pip install psycopg2-binary && \
+pip install cx_Oracle
 tar -xvf $memcache_need && \
 
 # 安装依赖 mongo

@@ -21,9 +21,11 @@
 #    ┗┓┓┏━┳┓┏┛
 #     ┃┫┫ ┃┫┫
 #     ┗┻┛ ┗┻┛
-# 指导链接：https://www.jb51.net/article/106295.htm
+"""
+requirement: pip install cx_Oracle,
+报错： no module name 可参考指导链接：https://www.jb51.net/article/106295.htm
+"""
 import os
-
 import cx_Oracle
 
 # 设置字符集编码

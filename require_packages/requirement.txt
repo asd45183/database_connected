@@ -12,3 +12,5 @@ redis ==> redis-py-master.tar.gz
 
 postgres ==> pip install psycopg2-binary
 
+Oracle ==> pip install cx_Oracle
+
