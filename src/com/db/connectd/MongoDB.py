@@ -15,9 +15,11 @@ class MonGoConnected:
                  collection=""):
         # 定义连接客户端
         self.client = None
+
         # 初始化参数
         self.db_name = database_name
         self.col = collection
+
         """
         self.host = host
         self.port = port
@@ -28,15 +30,21 @@ class MonGoConnected:
         self.url = "mongodb://%s:%s@%s:%s/%s" % (self.username, self.password, self.host, self.port, self.con_db)
 """
         self.url = "mongodb://%s:%s@%s:%s/%s" % (username, password, host, port, con_db)
+
         try:
+
             # 定义 Client
             conn_url = self.url
+
             # 定义连接客户端
             self.client = MongoClient(conn_url)
 
         except ConnectionFailure as connect_error:
+
             print (connect_error.message)
+
             print ("")
+
             print ("Server not available")
 
     # 插入数据
@@ -44,31 +52,41 @@ class MonGoConnected:
 
         # 创建数据库
         test_db = self.client[self.db_name]
+
         # 插入数据:创建集合
         test_collection = test_db[self.col]
+
         # 插入数据：写入数据
         data = test_collection.insert_many(data_list)
+
         # 插入数据：保存数据
         # test_collection.save(data_list)
-        self.client.close()
+
+        result = self.client.close()
 
     # 查询数据
     def find_test_data(self):
 
         # 获取所有db列表
         db_list = self.client.list_database_names()
+
         # 检查是否存在测试db
         assert (
                 self.db_name in db_list), "except database_name is  % self.db_name, but we can't find it in db_list" % self.db_name
+
         # 检查是否存在测试集合
         collection_list = self.client[self.db_name].list_collection_names()
         assert (
                 self.col in collection_list), "except collection is % self.col ,but we can't find it in collection_list" % self.col
+
         # 查询数据
         test_collection = self.client[self.db_name][self.col]
+
         for data in test_collection.find():
+
             # dict类型
-            print (type(data))
+            # print (type(data))
+
             # 调用json.dumps() 转换为json类型
             print (json.dumps(str(data), encoding='utf-8', ensure_ascii=False))
 
@@ -76,12 +94,16 @@ class MonGoConnected:
     def update_data(self):
 
         test_collection = self.client[self.db_name][self.col]
+
         # 更新数据
         test_collection.update_many({"data_name": "test_data_3"}, {'$set': {"data_name": "test_data_4"}})
+
         # 查询数据
         for data in test_collection.find():
+
             # dict类型
-            print (type(data))
+            # print (type(data))
+
             # 调用json.dumps() 转换为json类型
             print (json.dumps(str(data), encoding='utf-8', ensure_ascii=False))
 
@@ -89,31 +111,48 @@ class MonGoConnected:
     def delete_data(self):
 
         del_collection = "runoob"
+
         db = self.client[self.db_name]
+
         col = self.client[self.db_name][self.col]
+
         # 删除数据
-        print(col.delete_many({"data_name": "test_data_4"}))
+        result_1 = col.delete_many({"data_name": "test_data_4"})
+
         # 删除集合
-        print(db.drop_collection(del_collection))
+        result_2 = db.drop_collection(del_collection)
+
+        # 也可返回result_2
+        return (result_1)
+
 
     # 创建用户
     def create_user(self):
 
         user_name = "test_user"
+
         db = self.client["admin"]
+
         # 新建用户
-        print(db.command("createUser", user_name, pwd="password", roles=["root"]))
+        result= db.command("createUser", user_name, pwd="password", roles=["root"])
+
+        return (result)
 
     # 更新用户信息
     def update_user(self):
 
         user_name = "test_user"
+
         db = self.client["admin"]
+
         # 更新用户（密码）
-        print(db.command("updateUser", user_name, pwd="123456", roles=["root"]))
+        result = db.command("updateUser", user_name, pwd="123456", roles=["root"])
+
+        return (result)
 
 
 if __name__ == '__main__':
+
     # 初始化测试数据
     data_list = [{
         "title": 'MongoDB 教程',

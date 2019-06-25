@@ -29,6 +29,7 @@ class RedisConnected:
         self.key_value = key_value
         self.hash_name = hash_name
         self.hash_data = hash_data
+
         try:
 
             self.client = Redis(
@@ -36,6 +37,7 @@ class RedisConnected:
                 port=port,
                 password=password
             )
+
         except ConnectionError as connection_err:
             print (connection_err.message)
 
@@ -55,33 +57,41 @@ class RedisConnected:
         ``xx`` if set to True, set the value at key ``name`` to ``value`` only
             if it already exists.
         """
+
         result = self.client.set(name=self.key_name, value=self.key_value, ex=-1, xx=False)
+
         return (result)
 
     # 普通查询数据
     def get_data(self):
 
         result = self.client.get(name=self.key_name)
+
         assert self.key_value == result, "the value of %s is not expect ,the really value is %s" % (
+
         self.key_name, result)
+
         return (result)
 
     # 插入hash 类型的数据
     def set_hash_data(self):
 
         result = self.client.hmset(name=self.hash_name, mapping=self.hash_data)
+
         return (result)
 
     # 查询hash 类型的数据
     def get_hash_data(self):
 
         result = self.client.hgetall(name=self.hash_name)
+
         return (result)
 
     # 插入 list 类型的数据
     def set_list_data(self):
 
         result = self.client.lpush("list_data",1,2,3,4,5,6,7,8,9,0)
+
         return (result)
 
     # 获取 list 数据
@@ -89,10 +99,12 @@ class RedisConnected:
 
         # 获取所有数据
         result = self.client.lindex("list_data",-1)
+
         return (result)
 
 
 if __name__ == '__main__':
+
     # 初始化测试数据
     key_name = "test_key"
     key_value = "test_key_value"
@@ -103,6 +115,7 @@ if __name__ == '__main__':
         "data_name": "test_data",
         "data_id": "1001"
     }
+
     re_con = RedisConnected(host="", port=6379, password="", key_name=key_name, key_value=key_value,
                             hash_name=hash_name, hash_data=hash_data)
     re_con.set_list_data()
