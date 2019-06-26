@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # author:Me.D
+import sys
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 import pymysql
 
 
 class MySQLConnected(object):
 
     def __init__(self, host="", port=3306, username="", password="", database="", charset="utf8"):
-
         # 初始化参数
         self.host = host
         self.port = port
@@ -23,12 +25,11 @@ class MySQLConnected(object):
 
     # 创建一个测试库：test_db
     def create_database(self):
-
         # 创建数据操作游标
         cursor = self.client.cursor()
 
         # 执行SQL
-        cursor.execute("CREATE DATABASE test_db WITH ENCODING='utf8'")
+        result = cursor.execute("CREATE DATABASE test_db default charset utf8 COLLATE utf8_general_ci;")
 
         """
         举个例子:cursor是我们连接数据库的实例
@@ -47,14 +48,11 @@ class MySQLConnected(object):
         
         ((username1,password1,nickname1),(username2,password2,nickname2),(username3,password3,nickname))
         """
-
-        cursor.fetchone()
-
+        return result
         cursor.close()
 
     # 创建测试表
     def create_table(self):
-
         # 创建数据操作游标
         cursor = self.client.cursor()
         # 执行SQL
@@ -62,7 +60,7 @@ class MySQLConnected(object):
 
         cursor.execute("DROP TABLE IF EXISTS table3")
 
-        cursor.execute(
+        result = cursor.execute(
             "create table table3("
             "p_id int primary key,"
             "p_name varchar(20) NOT NULL,"
@@ -70,12 +68,11 @@ class MySQLConnected(object):
             "CreateTime datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间')"
             " ENGINE  =  INNODB    DEFAULT  CHARSET  =  utf8mb4 "
         )
-
-        cursor.fetchone()
+        cursor.execute("commit")
+        return result
         cursor.close()
 
     def insert_data_to_table(self):
-
         # 创建数据操作游标
         cursor = self.client.cursor()
 
@@ -114,12 +111,16 @@ class MySQLConnected(object):
 
         for sql in sql_list:
             cursor.execute(sql)
+        cursor.execute("commit")
 
-        cursor.close()
+        cursor.execute("select count(*) from table3")
+
+        result = cursor.fetchone()
+
+        return result[0]
 
     # 查询数据
     def get_data(self):
-
         """
         fetchone()的使用:
 
@@ -139,40 +140,46 @@ class MySQLConnected(object):
 
         cursor.execute("USE test_db")
 
-        cursor.execute("select * from table3")
+        cursor.execute("select count(*) from table3")
 
-        result_list = cursor.fetchall()
+        result = cursor.fetchone()
+
+        # 数据应被删除，所以返回结果即可
+        return result[0]
+
+        # result_list = cursor.fetchall()
 
         """
         for row in result:
             return ("p_id=" + str(row[0]) + "p_name=" + str(row[1]) + "p_sex=" + str(
                 row[2]) + "CreateTime=" + str(row[3]))
         """
-        for row in result_list:
-            result = ("p_id=%d, p_name=%s, p_sex=%s, CreateTime=%s" % (row[0], row[1], row[2], row[3]))
 
-            return result
+    #  for row in result_list:
+    #      result = ("p_id=%d, p_name=%s, p_sex=%s, CreateTime=%s" % (row[0], row[1], row[2], row[3]))
+    #
+    #     return result
 
     # 修改表
-    def update_date(self):
-
+    def update_data(self):
         # 定义游标
         cursor = self.client.cursor()
 
         cursor.execute("USE test_db")
 
-        cursor.execute("update table3 set p_name='date_new' where p_id=1027")
+        cursor.execute("update table3 set p_name='data_new' where p_id=1027")
 
-        cursor.execute("select * from table3 where p_id=1027")
+        cursor.execute("commit")
+
+        cursor.execute("select p_name from table3 where p_id=1027")
 
         result = cursor.fetchone()
 
         # 返回修改后的值，1 表示第二个值 即 p_name
-        return result[1]
+        return result[0]
 
-    # 删除表
-    def delete_date(self):
-
+    # 删除表中内容
+    def delete_table(self):
         # 定义游标
         cursor = self.client.cursor()
 
@@ -180,16 +187,30 @@ class MySQLConnected(object):
 
         cursor.execute("delete from  table3  where p_id=1027")
 
-        cursor.execute("select * from table3 where p_id=1027")
+        cursor.execute("commit")
+
+        cursor.execute("select count(* ) from table3 ")
 
         result = cursor.fetchone()
 
         # 数据应被删除，所以返回结果即可
+        return result[0]
+
+    # 删除表及测试数据库
+    def delete_all_data(self):
+        # 定义游标
+        cursor = self.client.cursor()
+
+        # cursor.execute("drop table test_db.table3")
+
+        result = cursor.execute("Drop database test_db")
+
+        # result = cursor.execute("commit")
+
         return result
 
     # 关闭连接
     def close_conn(self):
-
         result = self.client.close()
 
         return result
@@ -200,10 +221,12 @@ if __name__ == '__main__':
     host = "127.0.0.1"
     port = 3306
     username = "root"
-    password = "password"
-    database = "mytest"
+    password = "123456"
+    database = ""
     charset = "utf8"
 
     # 初始化对象
     my_con = MySQLConnected(host=host, port=port, username=username, password=password, database=database,
                             charset=charset)
+
+    my_con.delete_all_data()
