@@ -5,12 +5,13 @@
 requirements:pymongo-3.8.0.tar.gz
 """
 
-from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure
 import json
 
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
 
-class MonGoConnected:
+
+class MonGoConnected(object):
     def __init__(self, host="", port=28001, username="root", password="", con_db="admin", database_name="",
                  collection=""):
         # 定义连接客户端
@@ -57,12 +58,14 @@ class MonGoConnected:
         test_collection = test_db[self.col]
 
         # 插入数据：写入数据
-        data = test_collection.insert_many(data_list)
+        result = test_collection.insert_many(data_list)
 
         # 插入数据：保存数据
         # test_collection.save(data_list)
 
-        result = self.client.close()
+        self.client.close()
+
+        return result
 
     # 查询数据
     def find_test_data(self):
@@ -83,7 +86,6 @@ class MonGoConnected:
         test_collection = self.client[self.db_name][self.col]
 
         for data in test_collection.find():
-
             # dict类型
             # print (type(data))
 
@@ -100,7 +102,6 @@ class MonGoConnected:
 
         # 查询数据
         for data in test_collection.find():
-
             # dict类型
             # print (type(data))
 
@@ -123,8 +124,7 @@ class MonGoConnected:
         result_2 = db.drop_collection(del_collection)
 
         # 也可返回result_2
-        return (result_1)
-
+        return result_1, result_2
 
     # 创建用户
     def create_user(self):
@@ -134,9 +134,9 @@ class MonGoConnected:
         db = self.client["admin"]
 
         # 新建用户
-        result= db.command("createUser", user_name, pwd="password", roles=["root"])
+        result = db.command("createUser", user_name, pwd="password", roles=["root"])
 
-        return (result)
+        return result
 
     # 更新用户信息
     def update_user(self):
@@ -148,11 +148,10 @@ class MonGoConnected:
         # 更新用户（密码）
         result = db.command("updateUser", user_name, pwd="123456", roles=["root"])
 
-        return (result)
+        return result
 
 
 if __name__ == '__main__':
-
     # 初始化测试数据
     data_list = [{
         "title": 'MongoDB 教程',
@@ -185,7 +184,7 @@ if __name__ == '__main__':
 
     # 定义对象，传入测试数据
     mon_conn = MonGoConnected(host="", username="root", password="Admin123", con_db="admin", port=28001,
-                            database_name="test_db", collection="testCollection")
+                              database_name="test_db", collection="testCollection")
     mon_conn.insert_test_data()
     mon_conn.find_test_data()
     mon_conn.update_data()

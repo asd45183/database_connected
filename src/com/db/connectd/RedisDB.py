@@ -4,10 +4,10 @@
 """
 requirement:redis-py-master.tar.gz
 """
-from redis import Redis, ConnectionError, ConnectionPool
+from redis import Redis, ConnectionError
 
 
-class RedisConnected:
+class RedisConnected(object):
 
     # 初始化连接
     def __init__(self, host="", port=6379, password="", key_name="", key_value="", hash_name="", hash_data={}):
@@ -60,7 +60,7 @@ class RedisConnected:
 
         result = self.client.set(name=self.key_name, value=self.key_value, ex=-1, xx=False)
 
-        return (result)
+        return result
 
     # 普通查询数据
     def get_data(self):
@@ -69,42 +69,41 @@ class RedisConnected:
 
         assert self.key_value == result, "the value of %s is not expect ,the really value is %s" % (
 
-        self.key_name, result)
+            self.key_name, result)
 
-        return (result)
+        return result
 
     # 插入hash 类型的数据
     def set_hash_data(self):
 
         result = self.client.hmset(name=self.hash_name, mapping=self.hash_data)
 
-        return (result)
+        return result
 
     # 查询hash 类型的数据
     def get_hash_data(self):
 
         result = self.client.hgetall(name=self.hash_name)
 
-        return (result)
+        return result
 
     # 插入 list 类型的数据
     def set_list_data(self):
 
-        result = self.client.lpush("list_data",1,2,3,4,5,6,7,8,9,0)
+        result = self.client.lpush("list_data", 1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
 
-        return (result)
+        return result
 
     # 获取 list 数据
     def get_list_data(self):
 
         # 获取所有数据
-        result = self.client.lindex("list_data",-1)
+        result = self.client.lindex("list_data", -1)
 
-        return (result)
+        return result
 
 
 if __name__ == '__main__':
-
     # 初始化测试数据
     key_name = "test_key"
     key_value = "test_key_value"

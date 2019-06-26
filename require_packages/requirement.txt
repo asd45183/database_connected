@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 
 python ==> 2.7
+       ==> pip install pytest
+       ==> pip install logging
 
 mongo ==> pymongo-3.8.0.tar.gz
 
@@ -14,3 +16,7 @@ postgres ==> pip install psycopg2-binary
 
 Oracle ==> pip install cx_Oracle
 
+TSDB ==> pip install requests
+
+hbase ==> pip install thrift
+      ==> pip install hbase-thrift

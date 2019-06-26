@@ -1,25 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # author:Me.D
+"""
+requirement: pip install pymssql
+Python 操作SQLServer 需要使用 pymssql 模块，使用pip install pymssql安装。然后import该包即可。安装成功后，使用如下语句和 MSSql 数据库交互。
 
-import pymysql
+（ pymssql 需要安装 Cython：https://pypi.org/project/Cython   和   freetds：linux下利用freetds 访问sqlserver数据库  ）
+
+下载 FreeTDS，地址：www.freetds.org
+下载后解压: tar -zxvf XXX.tar.gz
+然后执行
+        ./configure --prefix=/usr/local/freetds --with-tdsver=7.1 --enable-msdblib
+        make
+        make install
+
+"""
+import pymssql
 
 
-class MySQLConnected(object):
+class SqlServerConnected(object):
 
-    def __init__(self, host="", port=3306, username="", password="", database="", charset="utf8"):
-
-        # 初始化参数
-        self.host = host
-        self.port = port
-        self.username = username
-        self.password = password
-        self.database = database
-        self.charset = charset
-
-        # 定义连接端
-        self.client = pymysql.connect(database=self.database, user=self.username, passwd=self.password,
-                                      host=self.host, port=self.port, charset=self.charset)
+    def __init__(self, host="", port=5432, username="", password="", database="test"):
+        self.client = pymssql.connect(server=host, port=port, user=username, password=password, database=database)
 
     # 创建一个测试库：test_db
     def create_database(self):
@@ -60,20 +62,17 @@ class MySQLConnected(object):
         # 执行SQL
         cursor.execute("USE test_db")
 
-        cursor.execute("DROP TABLE IF EXISTS table3")
-
-        cursor.execute(
-            "create table table3("
-            "p_id int primary key,"
-            "p_name varchar(20) NOT NULL,"
-            "p_sex varchar(10),"
-            "CreateTime datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间')"
-            " ENGINE  =  INNODB    DEFAULT  CHARSET  =  utf8mb4 "
-        )
+        cursor.execute("create table table3("
+                       "p_id int primary key,"
+                       "p_name varchar(20) NOT NULL,"
+                       "p_sex varchar(10),"
+                       "CreateTime datetime NULL DEFAULT CURRENT_TIMESTAMP)"
+                       )
 
         cursor.fetchone()
         cursor.close()
 
+    # 插入数据
     def insert_data_to_table(self):
 
         # 创建数据操作游标
@@ -139,15 +138,10 @@ class MySQLConnected(object):
 
         cursor.execute("USE test_db")
 
-        cursor.execute("select * from table3")
+        cursor.execute("select * table3")
 
         result_list = cursor.fetchall()
 
-        """
-        for row in result:
-            return ("p_id=" + str(row[0]) + "p_name=" + str(row[1]) + "p_sex=" + str(
-                row[2]) + "CreateTime=" + str(row[3]))
-        """
         for row in result_list:
             result = ("p_id=%d, p_name=%s, p_sex=%s, CreateTime=%s" % (row[0], row[1], row[2], row[3]))
 
@@ -196,14 +190,11 @@ class MySQLConnected(object):
 
 
 if __name__ == '__main__':
-    # 初始化数据
-    host = "127.0.0.1"
-    port = 3306
-    username = "root"
-    password = "password"
-    database = "mytest"
-    charset = "utf8"
+    # 参数初始化
+    host = ""
+    port = 5432
+    username = ""
+    password = ""
+    database = "test"
 
-    # 初始化对象
-    my_con = MySQLConnected(host=host, port=port, username=username, password=password, database=database,
-                            charset=charset)
+    mssql_con = SqlServerConnected(host=host, port=port, password=password, username=username, database=database)

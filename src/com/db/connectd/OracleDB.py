@@ -4,35 +4,20 @@
 # @Author  : Mr_d
 # @Site    : 
 # @File    : OracleDB.py
-#  ┏┓   ┏┓
-# ┏┛┻━━━┛┻┓
-#  ┃       ┃
-#  ┃ ━　　　┃
-#  ┃┳┛  ┗┳ ┃
-#  ┃       ┃
-#  ┃   ┻   ┃
-#  ┃       ┃
-#  ┗━┓   ┏━┛
-#    ┃   ┃   神兽保佑
-#    ┃   ┃   代码无BUG!
-#    ┃   ┗━━━┓
-#    ┃       ┣┓
-#    ┃       ┏┛
-#    ┗┓┓┏━┳┓┏┛
-#     ┃┫┫ ┃┫┫
-#     ┗┻┛ ┗┻┛
+#
 """
 requirement: pip install cx_Oracle,
 报错： no module name 可参考指导链接：https://www.jb51.net/article/106295.htm
 """
 import os
+
 import cx_Oracle
 
 # 设置字符集编码
 os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
 
 
-class OracleConnected:
+class OracleConnected(object):
 
     def __init__(self, host="", port=1521, username="", password="", database=""):
         # 初始化参数
@@ -98,7 +83,7 @@ class OracleConnected:
 
             # 关闭游标
             cursor.close()
-            return (result)
+            return result
 
     # 删除表
     def delete_table(self):
@@ -120,7 +105,7 @@ class OracleConnected:
 
             # 关闭游标
             cursor.close()
-            return (result)
+            return result
 
     # 插入测试数据
     def insert_test_data(self):
@@ -157,7 +142,7 @@ class OracleConnected:
 
             # 关闭游标
             cursor.close()
-            return (result)
+            return result
 
     # 删除测试数据
     def delete_test_data(self):
@@ -173,7 +158,7 @@ class OracleConnected:
 
         finally:
             result = cursor.execute("commit")
-            return (result)
+            return result
 
     # 修改用户密码
     def update_user_password(self):
@@ -196,7 +181,13 @@ class OracleConnected:
 
         else:
             result = cursor.execute("commit")
-            print (result)
+            return result
+
+    # 关闭客户端
+    def close_client(self):
+
+        result = self.client.close()
+        return result
 
 
 if __name__ == '__main__':
