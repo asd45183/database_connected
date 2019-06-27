@@ -4,7 +4,7 @@
 # @Author  : Mr_d
 # @Site    : 
 # @File    : test_MysqlDB.py
-# 未验证！！
+
 import logging
 import os
 
