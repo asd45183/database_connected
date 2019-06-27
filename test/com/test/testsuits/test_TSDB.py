@@ -1,76 +1,77 @@
-#!/usr/bin/env python
+#!/anaconda3/envs/python2.7/bin/python
 # -*- coding: utf-8 -*-
 # @Time    : 2019-06-26 16:00
 # @Author  : Mr_d
 # @Site    : 
 # @File    : test_TSDB.py
-import logging
-import os
 
+# 引入被测类
+from . import TSDBConnected
+
+# 引入公共配置
 import pytest
+import os
+from . import Logger
+from . import get_err_line
 
-from src.com.db.connectd.TSDB import TSDBConnected
-
-# 定位到项目目录
-base_url = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))))
-log_url = base_url + "/testfiles/log/TestTSDB.log"
+log = Logger("TestTSDB")
 
 
 class TestTSDB(object):
-    logging.basicConfig(level=logging.DEBUG, filename=log_url)
-
+    
     @pytest.fixture()
     def ts_init(self):
+
+        # 这里定义测试数据
         host = ''
-        port = 8888
+        port = 3242
         ts_conn = TSDBConnected(host=host, port=port)
-
+        log.info("TestMethod--------START")
         yield ts_conn
+        log.info("TestMethod--------END")
 
+    @pytest.mark.run(order=1)
     def test_get_version(self, ts_init):
-        log = logging.getLogger("test_get_version")
         result = ts_init.get_version()
-        assert result.status_code == 200
-        log.debug('\n')
+        assert result.status_code == 200, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
         # 输出内核
-        log.debug(result.json()['version'])
+        log.debug("version:" + result.json()['version'])
 
     def test_put_single_data(self, ts_init):
-        log = logging.getLogger("test_put_single_data")
         result = ts_init.put_single_data()
-        assert result.status_code == 204
+        assert result.status_code == 204, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result)
 
     def test_query_metrics_data(self, ts_init):
-        log = logging.getLogger("test_query_metrics_data")
         result = ts_init.query_metrics_data()
-        assert result.status_code == 200
+        assert result.status_code == 200, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result.text)
 
     def test_put_multi_data(self, ts_init):
-        log = logging.getLogger("test_put_multi_data")
-        assert ts_init.put_multi_data().status_code == 204
+        assert ts_init.put_multi_data().status_code == 204, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(ts_init.put_multi_data().text)
 
     def test_query_multi_data(self, ts_init):
-        log = logging.getLogger("test_query_multi_data")
         result = ts_init.query_multi_data()
-        assert result.status_code == 200
+        assert result.status_code == 200, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result.json())
 
     def test_delete_metric_data(self, ts_init):
-        log = logging.getLogger("test_delete_metric_data")
         result = ts_init.delete_metric_data()
-        assert result.status_code == 200
+        assert result.status_code == 200, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result.text)
 
     def test_delete_metric_meta(self, ts_init):
-        log = logging.getLogger("test_delete_metric_meta")
         result = ts_init.delete_metric_meta()
-        assert result.status_code == 200
+        assert result.status_code == 200, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result.text)
 
 
+
 if __name__ == '__main__':
-    pytest.main('-s')
+
+    os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    cmd = 'python -m  pytest %s --html=%s' % (__file__, '/Users/dingyq/python_study/db_connected/test/com/test/test.html')
+    os.system(cmd)
+
+

@@ -11,6 +11,8 @@ echo "=================================================>start"
 CURDIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd )
 base_dir=$CURDIR/require_packages
 
+echo $base_dir
+
 # 输出日志
 exec 2>&1>> $CURDIR/setup.log
 
@@ -57,4 +59,3 @@ cd $base_dir/$memcache_tar && python setup.py install && \
 cd $base_dir/$hbase_tar_c && python setup.py install && \
 
 cd $base_dir/$hbase_tar_1_c && python setup.py install
-
