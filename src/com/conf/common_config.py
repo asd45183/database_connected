@@ -39,7 +39,7 @@ class CommonConf(object):
         # 获取配置信息 class_nmae 为传入的测试类名
         self.conf_url = self.cf.get("common", "log_url")
 
-    # 返回真是路径
+    # 返回真实路径
     def __real_url(self, url_path=""):
         return '/'.join([self.base_url, url_path])
 
