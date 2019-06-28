@@ -8,9 +8,11 @@
 """
 requirement: pip install cx_Oracle,
 报错： no module name 可参考指导链接：https://www.jb51.net/article/106295.htm
+https://www.cnblogs.com/leihenqianshang/articles/4522837.html
 """
 import os
 
+# add oci.dll  to your python's site-packages
 import cx_Oracle
 
 # 设置字符集编码
@@ -75,44 +77,19 @@ class OracleConnected(object):
                            "COMM NUMBER(7,2),"
                            "DEPNO NUMBER(4))"
                            )
-        except cx_Oracle.DatabaseError as e:
+        except cx_Oracle.DataError as e:
             print (e)
 
         finally:
             result = cursor.execute("commit")
-
-            # 关闭游标
-            cursor.close()
-            return result
-
-    # 删除表
-    def delete_table(self):
-
-        # 定义游标
-        cursor = self.client.cursor()
-
-        try:
-
-            # 删除表
-            cursor.execute(
-                "DROP TABLE EMP"
-            )
-        except cx_Oracle.DatabaseError as e:
-            print (e)
-
-        finally:
-            result = cursor.execute("commit")
-
             # 关闭游标
             cursor.close()
             return result
 
     # 插入测试数据
     def insert_test_data(self):
-
         # 定义游标
         cursor = self.client.cursor()
-
         # 初始化插入的数据
         sql_list = ["INSERT INTO EMP VALUES (7369,'SMITH','CLERK',7902,to_date('17-12-1980','dd-mm-yyyy'),800,null,20)",
                     "INSERT INTO EMP VALUES (7499, 'ALLEN', 'SALESMAN', 7698, to_date('20-2-1981','dd-mm-yyyy'), 1600, 300, 30)",
@@ -133,61 +110,75 @@ class OracleConnected(object):
                 # 插入数据
                 # print(sql)
                 cursor.execute(sql)
+            cursor.execute("commit")
 
         except cx_Oracle.DatabaseError as e:
             print (e)
 
         finally:
-            result = cursor.execute("commit")
-
+            cursor.execute("select count(*) from EMP")
+            result = cursor.fetchone()
             # 关闭游标
             cursor.close()
-            return result
-
-    # 删除测试数据
-    def delete_test_data(self):
-
-        # 定义游标
-        cursor = self.client.cursor()
-        try:
-            sql = "DELETE FROM EMP WHERE EMPNO = 7369"
-            cursor.execute(sql)
-
-        except cx_Oracle.DatabaseError as e:
-            print (e)
-
-        finally:
-            result = cursor.execute("commit")
-            return result
+            return result[0]
 
     # 修改用户密码
     def update_user_password(self):
 
         # 重定向client
         # 需要sys(用户）, syspassword
-        url = 'sys/syspasswd@%s:%s/%s' % (self.host, self.port, self.database)
+        url = 'sys/123456@%s:%s/%s' % (self.host, self.port, self.database)
         # 定义游标
         client = cx_Oracle.connect(url, mode=cx_Oracle.SYSDBA)
         cursor = client.cursor()
         sql = "alter user %s identified by %s " % (self.username, self.password)
         try:
-
             # 修改用户密码
-
-            cursor.execute(sql=sql)
-
+            cursor.execute(sql)
         except cx_Oracle.DatabaseError as e:
             print (e)
-
         else:
             result = cursor.execute("commit")
             return result
+
+    # 删除测试数据
+    def delete_test_data(self):
+        # 定义游标
+        cursor = self.client.cursor()
+        try:
+            sql = "DELETE FROM EMP WHERE EMPNO = 7369"
+            cursor.execute(sql)
+        except cx_Oracle.DatabaseError as e:
+            print (e)
+        finally:
+            cursor.execute("commit")
+            cursor.execute("select count(*) from EMP")
+            result = cursor.fetchone()
+            return result[0]
+
+    # 删除表
+    def delete_table(self):
+        # 定义游标
+        cursor = self.client.cursor()
+        try:
+            # 删除表
+            cursor.execute(
+                "DROP TABLE EMP"
+            )
+            cursor.execute("select * from EMP")
+        except cx_Oracle.DatabaseError as e:
+            print (e)
+        finally:
+            result = cursor.execute("commit")
+            # 关闭游标
+            cursor.close()
+            print result
 
     # 关闭客户端
     def close_client(self):
 
         result = self.client.close()
-        return result
+        print result
 
 
 if __name__ == '__main__':
@@ -201,4 +192,8 @@ if __name__ == '__main__':
     # 初始化对象
     ora_con = OracleConnected(host=host, port=port, username=username, password=password, database=database)
     # ora_con.create_table()
-    ora_con.insert_test_data()
+    # ora_con.insert_test_data()
+    # ora_con.delete_test_data()
+    # ora_con.delete_table()
+    # ora_con.update_user_password()
+    ora_con.close_client()

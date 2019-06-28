@@ -19,7 +19,7 @@ Python 操作SQLServer 需要使用 pymssql 模块，使用pip install pymssql�
 
 import sys
 
-reload(sys)
+# reload(sys)
 sys.setdefaultencoding('utf8')
 import pymssql
 
@@ -43,7 +43,7 @@ class SqlServerConnected(object):
 
         cursor.execute("commit")
         # None
-        print result
+        return result
 
     # 插入数据
     def insert_data_to_table(self):
@@ -83,13 +83,13 @@ class SqlServerConnected(object):
 
         for sql in sql_list:
             cursor.execute(sql)
-        #cursor.execute("commit")
+        # cursor.execute("commit")
 
         cursor.execute("select count(*) from table3")
 
         result = cursor.fetchone()
-        #27
-        print result[0]
+        # 27
+        return result[0]
 
     # 查询数据
     def get_data(self):
@@ -120,8 +120,8 @@ class SqlServerConnected(object):
         #    return result
         cursor.execute("select count(*) from table3")
         result = cursor.fetchone()
-        #27
-        print result[0]
+        # 27
+        return result[0]
 
     # 修改表
     def update_data(self):
@@ -133,11 +133,11 @@ class SqlServerConnected(object):
         cursor.execute("select p_name from table3 where p_id=1027")
 
         result = cursor.fetchone()
-        #data_new
-        print result[0]
+        # data_new
+        return result[0]
 
     # 删除表
-    def delete_table(self):
+    def delete_data(self):
         # 定义游标
         cursor = self.client.cursor()
 
@@ -146,23 +146,23 @@ class SqlServerConnected(object):
         cursor.execute("select count(*) from table3")
 
         result = cursor.fetchone()
-        #26
-        print result[0]
+        # 26
+        return result[0]
 
-    # 删除表及测试数据库
-    def delete_all_data(self):
+    # 删除表
+    def delete_table(self):
         # 定义游标
         cursor = self.client.cursor()
 
         result = cursor.execute("drop table table3")
-        #None
-        print result
+        # None
+        return result
 
     # 关闭连接
     def close_conn(self):
         result = self.client.close()
-        #None
-        print result
+        # None
+        return result
 
 
 if __name__ == '__main__':
@@ -179,6 +179,6 @@ if __name__ == '__main__':
     mssql_con.insert_data_to_table()
     mssql_con.get_data()
     mssql_con.update_data()
+    mssql_con.delete_data()
     mssql_con.delete_table()
-    mssql_con.delete_all_data()
     mssql_con.close_conn()

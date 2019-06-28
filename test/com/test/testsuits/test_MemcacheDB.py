@@ -42,20 +42,34 @@ class TestMem(object):
 
     def test_set_data(self):
         # 判断插入数据成功 应为True
-        assert self.mem_con.set_data() is True, log.error("测试失败，结果应为:True，错误方法为：%r,错误行数为 %r" % get_err_line())
+        result = self.mem_con.set_data()
+        assert result is True, log.error("测试失败，结果应为: True，错误方法为：%s, 错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s,当前的行数为：%r" % get_err_line())
 
     def test_get_data(self):
         # 判断是否取到数据,有数据则为True
-        assert self.mem_con.get_data() is True, log.error("测试失败，结果应为:True，错误方法为：%r,错误行数为 %r" % get_err_line())
+        result = self.mem_con.get_data()
+        assert result is True, log.error("测试失败，结果应为: True，错误方法为：%s, 错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s,当前的行数为：%r" % get_err_line())
 
     def test_update_data(self):
         # 判断更新数据方法
-        assert self.mem_con.update_data() is True, log.error("测试失败，结果应为:True，错误方法为：%r,错误行数为 %r" % get_err_line())
+        result = self.mem_con.update_data()
+        assert result is True, log.error("测试失败，结果应为: True，错误方法为：%s, 错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s,当前的行数为：%r" % get_err_line())
 
     def test_delete_data(self):
         # 判断删除数据成功 应为True
-        assert self.mem_con.delete_data() is True, log.error("测试失败，结果应为:True，错误方法为：%r,错误行数为 %r" % get_err_line())
+        result = self.mem_con.delete_data()
+        assert result is True, log.error("测试失败，结果应为: True，错误方法为：%s, 错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s,当前的行数为：%r" % get_err_line())
 
     def test_set_multi_data(self):
         # 判断插入数据成功 应为True
-        assert self.mem_con.set_multi_data() is True, log.error("测试失败，结果应为:True，错误方法为：%r,错误行数为 %r" % get_err_line())
+        result = self.mem_con.set_multi_data()
+        assert result is True, log.error("测试失败，结果应为: True，错误方法为：%s, 错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
+
+
+if __name__ == '__main__':
+    pytest.main()

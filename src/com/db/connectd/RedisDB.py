@@ -59,7 +59,7 @@ class RedisConnected(object):
         """
 
         result = self.client.set(name=self.key_name, value=self.key_value)
-        #True
+        # True
         return result
 
     # 普通查询数据
@@ -77,14 +77,14 @@ class RedisConnected(object):
     def set_hash_data(self):
 
         result = self.client.hmset(name=self.hash_name, mapping=self.hash_data)
-        #True
+        # True
         return result
 
     # 查询hash 类型的数据
     def get_hash_data(self):
 
         result = self.client.hgetall(name=self.hash_name)
-        #1
+        # 1
         return result
 
     # 插入 list 类型的数据

@@ -6,7 +6,6 @@
 # @File    : test_TSDB.py
 # 使用pytest执行
 # 引入被测类
-import os
 
 # 引入公共配置
 import pytest
@@ -43,42 +42,46 @@ class TestTSDB(object):
 
     def test_get_version(self):
         result = self.ts_con.get_version()
-        assert result.status_code == 200, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
-        # 输出内核
-        log.debug("version:" + result.json()['version'])
+        assert result.status_code == 200, \
+            log.error("测试失败，结果应为: 200, 错误方法为：%r,错误行数为：%r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
     def test_put_single_data(self):
         result = self.ts_con.put_single_data()
-        assert result.status_code == 204, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(result)
+        assert result.status_code == 204, \
+            log.error("测试失败，结果应为: 204, 错误方法为：%r,错误行数为：%r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
     def test_query_metrics_data(self):
         result = self.ts_con.query_metrics_data()
-        assert result.status_code == 200, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(result.text)
+        assert result.status_code == 200, \
+            log.error("测试失败，结果应为: 200, 错误方法为：%r,错误行数为：%r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
     def test_put_multi_data(self):
-        assert self.ts_con.put_multi_data().status_code == 204, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(self.ts_con.put_multi_data().text)
+        result = self.ts_con.put_multi_data()
+        assert result.status_code == 204, \
+            log.error("测试失败，结果应为: 204, 错误方法为：%r,错误行数为：%r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
     def test_query_multi_data(self):
         result = self.ts_con.query_multi_data()
-        assert result.status_code == 200, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(result.json())
+        assert result.status_code == 200, \
+            log.error("测试失败，结果应为: 200, 错误方法为：%r,错误行数为：%r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
     def test_delete_metric_data(self):
         result = self.ts_con.delete_metric_data()
-        assert result.status_code == 200, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(result.text)
+        assert result.status_code == 200, \
+            log.error("测试失败，结果应为: 200, 错误方法为：%r,错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
     def test_delete_metric_meta(self):
         result = self.ts_con.delete_metric_meta()
-        assert result.status_code == 200, log.error("测试失败，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(result.text)
+        assert result.status_code == 200, \
+            log.error("测试失败，结果应为: 200, 错误方法为：%r,错误行数为：%r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
 
 if __name__ == '__main__':
-    os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-    cmd = 'python -m  pytest %s --html=%s' % (
-    __file__, '/Users/dingyq/python_study/db_connected/test/com/test/test.html')
-    os.system(cmd)
+    pytest.main()

@@ -22,10 +22,10 @@ class TestMysql(object):
     def setup_class(cls):
 
         # 这里定义测试数据
-        host = "127.0.0.1"
+        host = ""
         port = 3306
-        username = "root"
-        password = "123456"
+        username = ""
+        password = ""
         database = ""
         charset = "utf8"
 
@@ -47,39 +47,40 @@ class TestMysql(object):
 
     def test_create_database(self):
         result = self.my_con.create_database()
-        assert result == 1, log.error("测试失败，结果应为:1，错误方法为：%r,错误行数为 %r" % get_err_line())
+        assert result == 1, log.error("测试失败，结果应为:1，错误行数为: %s, 错误行数为: %r" % get_err_line())
         log.debug(result)
 
     def test_create_table(self):
         result = self.my_con.create_table()
-        assert result == 0, log.error("测试失败，结果应为:0，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(result)
+        assert result == 0, log.error("测试失败，结果应为:0，错误行数为: %s, 错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
     def test_insert_data(self):
         result = self.my_con.insert_data_to_table()
-        assert result == 27, log.error("测试失败，结果应为:27，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(result)
+        assert result == 27, log.error("测试失败，结果应为:27，错误行数为: %s, 错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
     def test_get_data(self):
         result = self.my_con.get_data()
-        assert result == 27, log.error("测试失败，结果应为:27，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(result)
+        assert result == 27, log.error("测试失败，结果应为:27，错误行数为: %s, 错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
     def test_update_data(self):
         result = self.my_con.update_data()
-        assert result == "data_new", log.error("测试失败，结果应为:data_new，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(result)
+        assert result == "data_new", \
+            log.error("测试失败，结果应为:data_new，错误行数为: %s, 错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
     def test_delete_data(self):
         result = self.my_con.delete_table()
         log.debug(result)
-        assert result == 26, log.error("测试失败，结果应为:26，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(result)
+        assert result == 26, log.error("测试失败，结果应为:26，错误行数为: %s, 错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
     def test_delete_all_data(self):
         result = self.my_con.delete_all_data()
-        assert result == 1, log.error("测试失败，结果应为:1，错误方法为：%r,错误行数为 %r" % get_err_line())
-        log.debug(result)
+        assert result == 1, log.error("测试失败，结果应为:1，错误行数为: %s, 错误行数为: %r" % get_err_line())
+        log.info("测试通过，方法名称为: %s, 当前的行数为：%r" % get_err_line())
 
 
 if __name__ == '__main__':

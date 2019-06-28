@@ -50,7 +50,7 @@ class PostgresConnected(object):
         cursor = self.client.cursor()
 
         # 执行SQL
-        result =cursor.execute("CREATE DATABASE test_db WITH ENCODING='utf8'")
+        result = cursor.execute("CREATE DATABASE test_db WITH ENCODING='utf8'")
 
         """
         举个例子:cursor是我们连接数据库的实例
@@ -120,7 +120,7 @@ class PostgresConnected(object):
             cursor.execute(sql)
             cursor.execute("commit")
         cursor.execute("select count(*) from test_table")
-        result=cursor.fetchone()
+        result = cursor.fetchone()
         cursor.close()
         # 15
         return result[0]
@@ -163,7 +163,7 @@ class PostgresConnected(object):
         # 定义游标
         cursor = self.client.cursor()
 
-        cursor.execute("update test_table set data_name='date_new' where data_id=1016")
+        cursor.execute("update test_table set data_name='data_new' where data_id=1016")
 
         cursor.execute("select * from test_table where data_id=1016")
 
