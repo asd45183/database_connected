@@ -1,5 +1,0 @@
- -- commonlog.py -- [2019-06-27 16:30:29 Thu ] -- [[32mINFO - TestMethod--------START[0m]
- -- connectionpool.py -- [2019-06-27 16:30:29 Thu ] -- [Starting new HTTP connection (1): ts-bp14nn530hk1l8dtc.hitsdb.rds.aliyuncs.com:3242]
- -- connectionpool.py -- [2019-06-27 16:30:29 Thu ] -- [http://ts-bp14nn530hk1l8dtc.hitsdb.rds.aliyuncs.com:3242 "GET /api/version HTTP/1.1" 200 163]
- -- commonlog.py -- [2019-06-27 16:30:29 Thu ] -- [[36mDEBUG - version:2.4.1[0m]
- -- commonlog.py -- [2019-06-27 16:30:29 Thu ] -- [[32mINFO - TestMethod--------END[0m]

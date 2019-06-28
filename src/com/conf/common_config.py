@@ -41,11 +41,9 @@ class CommonConf(object):
 
     # 返回真是路径
     def __real_url(self, url_path=""):
-
         return '/'.join([self.base_url, url_path])
 
     def set_log_conf(self):
-
         log_url = self.__real_url(self.conf_url) + self.class_name + ".log"
         return log_url
 
@@ -66,4 +64,3 @@ def get_err_line():
 if __name__ == '__main__':
     cf = CommonConf(class_name="TestMysql")
     cf.set_log_conf()
-

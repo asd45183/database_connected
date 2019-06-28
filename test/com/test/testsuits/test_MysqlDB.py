@@ -4,22 +4,22 @@
 # @Author  : Mr_d
 # @Site    : 
 # @File    : test_MysqlDB.py
-
+# 使用pytest执行
 # 引入被测类
-from . import MySQLConnected
-
 # 引入公共配置
 import pytest
-from . import Logger
-from . import get_err_line
+
+from src.com.conf.common_config import get_err_line
+from src.com.conf.commonlog import Logger
+from src.com.db.connectd import MySQLConnected
 
 log = Logger("TestMysql")
 
 
 class TestMysql(object):
 
-    @pytest.fixture()
-    def mysql_init(self):
+    @classmethod
+    def setup_class(cls):
 
         # 这里定义测试数据
         host = "127.0.0.1"
@@ -28,54 +28,59 @@ class TestMysql(object):
         password = "123456"
         database = ""
         charset = "utf8"
-        my_con = MySQLConnected(host=host, port=port, username=username, password=password, database=database,
-                                charset=charset)
-        log.info("TestMethod--------START")
-        yield my_con
-        log.info("TestMethod---------END")
 
-    def test_create_database(self, mysql_init):
-        result = mysql_init.create_database()
+        try:
+            cls.my_con = MySQLConnected(host=host, port=port, username=username, password=password, database=database,
+                                        charset=charset)
+        except:
+            log.error("TestMethod---------ERROR")
+            log.error("初始化错误，程序结束")
+            pytest.skip(msg="始化错误")
+        else:
+            log.info("TestMethod--------START")
+            return cls.my_con
+
+    @classmethod
+    def teardown_class(cls):
+        log.info("TestMethod--------END")
+        pytest.exit("测试完成")
+
+    def test_create_database(self):
+        result = self.my_con.create_database()
         assert result == 1, log.error("测试失败，结果应为:1，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result)
 
-    # @pytest.mark.skip("这是一条跳过的方法")
-    def test_create_table(self, mysql_init):
-        result = mysql_init.create_table()
+    def test_create_table(self):
+        result = self.my_con.create_table()
         assert result == 0, log.error("测试失败，结果应为:0，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result)
 
-    def test_insert_data(self, mysql_init):
-        # 判断插入数据成功 应为True
-        result = mysql_init.insert_data_to_table()
+    def test_insert_data(self):
+        result = self.my_con.insert_data_to_table()
         assert result == 27, log.error("测试失败，结果应为:27，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result)
 
-    def test_get_data(self, mysql_init):
-        # 判断是否取到数据,有数据则为True
-        result = mysql_init.get_data()
+    def test_get_data(self):
+        result = self.my_con.get_data()
         assert result == 27, log.error("测试失败，结果应为:27，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result)
 
-    def test_update_data(self, mysql_init):
-        # 判断更新数据方法
-        result = mysql_init.update_data()
+    def test_update_data(self):
+        result = self.my_con.update_data()
         assert result == "data_new", log.error("测试失败，结果应为:data_new，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result)
 
-    def test_delete_data(self, mysql_init):
-        # 判断删除数据成功 应为True
-        result = mysql_init.delete_table()
+    def test_delete_data(self):
+        result = self.my_con.delete_table()
         log.debug(result)
         assert result == 26, log.error("测试失败，结果应为:26，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result)
 
-    def test_delete_all_data(self, mysql_init):
-        result = mysql_init.delete_all_data()
+    def test_delete_all_data(self):
+        result = self.my_con.delete_all_data()
         assert result == 1, log.error("测试失败，结果应为:1，错误方法为：%r,错误行数为 %r" % get_err_line())
         log.debug(result)
 
 
-# 调用 Pytest 开始测试
 if __name__ == '__main__':
     pytest.main()

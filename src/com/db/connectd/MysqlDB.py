@@ -69,8 +69,8 @@ class MySQLConnected(object):
             " ENGINE  =  INNODB    DEFAULT  CHARSET  =  utf8mb4 "
         )
         cursor.execute("commit")
-        return result
         cursor.close()
+        return result
 
     def insert_data_to_table(self):
         # 创建数据操作游标
@@ -149,11 +149,11 @@ class MySQLConnected(object):
 
         # result_list = cursor.fetchall()
 
-        """
+    """
         for row in result:
             return ("p_id=" + str(row[0]) + "p_name=" + str(row[1]) + "p_sex=" + str(
                 row[2]) + "CreateTime=" + str(row[3]))
-        """
+"""
 
     #  for row in result_list:
     #      result = ("p_id=%d, p_name=%s, p_sex=%s, CreateTime=%s" % (row[0], row[1], row[2], row[3]))
