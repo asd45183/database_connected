@@ -58,8 +58,8 @@ class RedisConnected(object):
             if it already exists.
         """
 
-        result = self.client.set(name=self.key_name, value=self.key_value, ex=-1, xx=False)
-
+        result = self.client.set(name=self.key_name, value=self.key_value)
+        #True
         return result
 
     # 普通查询数据
@@ -70,36 +70,37 @@ class RedisConnected(object):
         assert self.key_value == result, "the value of %s is not expect ,the really value is %s" % (
 
             self.key_name, result)
-
+        # test_key_value
         return result
 
     # 插入hash 类型的数据
     def set_hash_data(self):
 
         result = self.client.hmset(name=self.hash_name, mapping=self.hash_data)
-
+        #True
         return result
 
     # 查询hash 类型的数据
     def get_hash_data(self):
 
         result = self.client.hgetall(name=self.hash_name)
-
+        #1
         return result
 
     # 插入 list 类型的数据
     def set_list_data(self):
 
+        # 每次执行都会新增
         result = self.client.lpush("list_data", 1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
-
+        # 10
         return result
 
     # 获取 list 数据
     def get_list_data(self):
 
-        # 获取所有数据
-        result = self.client.lindex("list_data", -1)
-
+        # 获取数据
+        result = self.client.lindex("list_data", 0)
+        # 1
         return result
 
 

@@ -28,6 +28,9 @@ hbase_tar="hbase-thrift-0.20.4.tar.gz"
 hbase_tar_1="thrift-0.11.0.tar.gz"
 hbase_tar_c="hbase-thrift-0.20.4"
 hbase_tar_1_c="thrift-0.11.0"
+psql_cli="psycopg2_binary-2.7.3.2-cp27-cp27mu-manylinux1_x86_64.whl"
+pymssql_tar="pymssql-2.1.4.tar.gz"
+pymssql_cli="pymssql-2.1.4"
 
 # 安装依赖 pytest
 source activate python2.7 && pip install pytest
@@ -40,7 +43,8 @@ tar -zxvf $pymongo_need &&\
 tar -zxvf $redis_tar && \
 tar -xvf $memcache_need && \
 tar -zxvf $hbase_tar && \
-tar -zxvf $hbase_tar_1
+tar -zxvf $hbase_tar_1 &&\
+tar -zxvf $pymssql_tar
 
 
 # pip 安装
@@ -58,4 +62,8 @@ cd $base_dir/$memcache_tar && python setup.py install && \
 
 cd $base_dir/$hbase_tar_c && python setup.py install && \
 
-cd $base_dir/$hbase_tar_1_c && python setup.py install
+cd $base_dir/$hbase_tar_1_c && python setup.py install && \
+
+cd $base_dir/$pymssql_cli &&  python setup.py install && \
+
+cd $base_dir && pip install $psql_cli

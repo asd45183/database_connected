@@ -3,10 +3,11 @@
 # author:Me.D
 """
 requirement：pip install psycopg2-binary
-注：尚未验证可行性,
+注：已验证postgres , ppas
 适用于 ppas,postgres,gpdb
 """
 import psycopg2
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 
 class PostgresConnected(object):
@@ -28,19 +29,28 @@ class PostgresConnected(object):
         self.username = username
         self.password = password
         self.database = database
-
         # 定义连接端
         self.client = psycopg2.connect(database=self.database, user=self.username, password=self.password,
                                        host=self.host, port=self.port)
 
-    # 创建一个测试库：test_db
+        self.client.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+
+        # 调度建库
+        self.create_database()
+        # 重定义连接端
+        self.client = psycopg2.connect(database="test_db", user=self.username, password=self.password,
+                                       host=self.host, port=self.port)
+        self.client.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+
+    # skip
+    # 初始化已调度该方法去建库，不用做测试方法
     def create_database(self):
 
         # 创建数据操作游标
         cursor = self.client.cursor()
 
         # 执行SQL
-        cursor.execute("CREATE DATABASE test_db WITH ENCODING='utf8'")
+        result =cursor.execute("CREATE DATABASE test_db WITH ENCODING='utf8'")
 
         """
         举个例子:cursor是我们连接数据库的实例
@@ -60,9 +70,8 @@ class PostgresConnected(object):
         ((username1,password1,nickname1),(username2,password2,nickname2),(username3,password3,nickname))
         
         """
-        cursor.fetchone()
-
-        cursor.close()
+        # None
+        return result
 
     # 创建测试表
     def create_table(self):
@@ -71,31 +80,24 @@ class PostgresConnected(object):
         cursor = self.client.cursor()
 
         # 执行SQL
-        cursor.execute("USE test_db")
-
-        cursor.execute(
+        result = cursor.execute(
             "CREATE TABLE test_table("
             "data_id SERIAL primary key,"
             "data_name VARCHAR(20) NOT NULL,"
             "data_info VARCHAR(20),"
             "data_time timestamp NOT NULL DEFAULT current_timestamp(0)/*默认写入当前时间*/)"
         )
-        cursor.commit()
-
-        cursor.fetchone()
-
         cursor.close()
+        # None
+        return result
 
     def insert_data_to_table(self):
 
         # 创建数据操作游标
         cursor = self.client.cursor()
 
-        cursor.execute("USE test_db")
-
         # 定义插入数据列表
         sql_list = [
-            "insert into test_table(data_id,data_name,data_info) values ('1001','date_001','it is a test data')",
             "insert into test_table(data_id,data_name,data_info) values ('1002','date_002','it is a test data')",
             "insert into test_table(data_id,data_name,data_info) values ('1003','date_003','it is a test data')",
             "insert into test_table(data_id,data_name,data_info) values ('1004','date_004','it is a test data')",
@@ -116,9 +118,12 @@ class PostgresConnected(object):
         # 循环获取并插入数据
         for sql in sql_list:
             cursor.execute(sql)
-            cursor.commit()
-
+            cursor.execute("commit")
+        cursor.execute("select count(*) from test_table")
+        result=cursor.fetchone()
         cursor.close()
+        # 15
+        return result[0]
 
     # 查询数据
     def get_data(self):
@@ -141,52 +146,49 @@ class PostgresConnected(object):
         # 创建数据操作游标
         cursor = self.client.cursor()
 
-        cursor.execute("USE test_db;")
-
         cursor.execute("select * from test_table;")
 
         result = cursor.fetchall()
 
         for row in result:
-            return ("data_id=" + str(row[0]) + "data_name=" + str(row[1]) + "data_info=" + str(
+            print ("data_id=" + str(row[0]) + "data_name=" + str(row[1]) + "data_info=" + str(
                 row[2]) + "data_time=" + str(row[3]))
+        # 15
+        result1 = len(result)
+        return result1
 
     # 修改表
-    def update_date(self):
+    def update_data(self):
 
         # 定义游标
         cursor = self.client.cursor()
-
-        cursor.execute("USE test_db")
 
         cursor.execute("update test_table set data_name='date_new' where data_id=1016")
 
         cursor.execute("select * from test_table where data_id=1016")
 
-        cursor.commit()
-
         result = cursor.fetchone()
 
-        # 返回修改后的值，1 表示第二个值 即 data_name
+        cursor.execute("commit")
+
+        # 返回修改后的值，1 表示第二个值 即 date_new
         return result[1]
 
     # 删除表
-    def delete_date(self):
+    def delete_data(self):
 
         # 定义游标
         cursor = self.client.cursor()
-
-        cursor.execute("USE test_db")
 
         cursor.execute("delete from  test_table  where data_id=1016")
 
         cursor.execute("select * from test_table where data_id=1016")
 
-        cursor.commit()
-
         result = cursor.fetchone()
 
-        # 数据应被删除，所以返回结果即可
+        cursor.execute("commit")
+
+        # 数据应被删除，所以返回:  None
         return result
 
     # 关闭连接
@@ -194,9 +196,15 @@ class PostgresConnected(object):
 
         result = self.client.close()
 
+        # None
         return result
 
 
 if __name__ == '__main__':
     # 调用类
-    pg_con = PostgresConnected(host="", port=5432, username="", password="", database="postgres")
+    pg_con = PostgresConnected(host="", port=3433, username="", password="", database="postgres")
+    pg_con.create_table()
+    pg_con.insert_data_to_table()
+    pg_con.update_data()
+    pg_con.delete_data()
+    pg_con.close_conn()

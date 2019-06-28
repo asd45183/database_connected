@@ -38,31 +38,39 @@ class Memcaheconnected(object):
 
         """
         result = self.client.set(key=self.key_name, value=self.key_value)
+        # True
         return result
 
     # 查询数据
     def get_data(self):
         result = self.client.get(key=self.key_name)
-        return result
-
-    # 删除数据
-    def delete_data(self):
-        result = self.client.delete(key=self.key_name)
+        # test_key_value
         return result
 
     # 更新数据
     def update_data(self):
         result = self.client.replace(key=self.key_name, value=self.key_value_new)
+        #True
+        return result
+
+    # 删除数据
+    def delete_data(self):
+        result = self.client.delete(key=self.key_name)
+         #True
         return result
 
     # 插入多个数据
     def set_multi_data(self):
+
         # 循环插入20个数据
-        for i in range(1, 20):
-            key_name = "test_mem_key_" + str(i)
-            key_value = str(random.randint(1, 100))
-            result = self.client.set(key=key_name, value=key_value)
-            return result
+        try:
+            for i in range(1, 20):
+                key_name = "test_mem_key_" + str(i)
+                key_value = str(random.randint(1, 100))
+                result = self.client.set(key=key_name, value=key_value)
+            return True
+        except:
+            return False
 
 
 if __name__ == '__main__':
@@ -74,3 +82,5 @@ if __name__ == '__main__':
     mem_conn = Memcaheconnected(host="", port=11211,
                                 username="", password="", key_name=key_name,
                                 key_value=key_value, key_value_new=key_value_new)
+
+

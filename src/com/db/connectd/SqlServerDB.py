@@ -15,6 +15,8 @@ Python 操作SQLServer 需要使用 pymssql 模块，使用pip install pymssql�
         make install
 
 """
+# 需要创建一个数据库
+
 import sys
 
 reload(sys)
@@ -24,44 +26,14 @@ import pymssql
 
 class SqlServerConnected(object):
 
-    def __init__(self, host="", port=5432, username="", password="", database="test"):
+    def __init__(self, host="", port=5432, username="", password="", database="mytest"):
         self.client = pymssql.connect(server=host, port=port, user=username, password=password, database=database)
-
-    # 创建一个测试库：test_db
-    def create_database(self):
-        # 创建数据操作游标
-        cursor = self.client.cursor()
-
-        # 执行SQL
-        result = cursor.execute("CREATE DATABASE test_db WITH ENCODING='utf8'")
-
-        """
-        举个例子:cursor是我们连接数据库的实例
-
-        fetchone()的使用:
-
-        cursor.execute(select username,password,nickname from user where id='%s'  %(input)
-
-        result=cursor.fetchone();  此时我们可以通过result[0],result[1],result[2]得到username,password,nickname
-
-        fetchall()的使用:
-
-        cursor.execute(select * from user)
-
-        result=cursor.fetchall();此时select得到的可能是多行记录,那么我们通过fetchall得到的就是多行记录,是一个二维元组
-
-        ((username1,password1,nickname1),(username2,password2,nickname2),(username3,password3,nickname))
-        """
-        return result
-        cursor.close()
 
     # 创建测试表
     def create_table(self):
         # 创建数据操作游标
         cursor = self.client.cursor()
         # 执行SQL
-        cursor.execute("USE test_db")
-
         result = cursor.execute("create table table3("
                                 "p_id int primary key,"
                                 "p_name varchar(20) NOT NULL,"
@@ -70,15 +42,13 @@ class SqlServerConnected(object):
                                 )
 
         cursor.execute("commit")
-        return result
-        cursor.close()
+        # None
+        print result
 
     # 插入数据
     def insert_data_to_table(self):
         # 创建数据操作游标
         cursor = self.client.cursor()
-
-        cursor.execute("USE test_db")
 
         # 定义插入数据列表
         sql_list = [
@@ -113,13 +83,13 @@ class SqlServerConnected(object):
 
         for sql in sql_list:
             cursor.execute(sql)
-        cursor.execute("commit")
+        #cursor.execute("commit")
 
         cursor.execute("select count(*) from table3")
 
         result = cursor.fetchone()
-
-        return result[0]
+        #27
+        print result[0]
 
     # 查询数据
     def get_data(self):
@@ -140,8 +110,6 @@ class SqlServerConnected(object):
         # 创建数据操作游标
         cursor = self.client.cursor()
 
-        cursor.execute("USE test_db")
-
         # cursor.execute("select * table3")
 
         # result_list = cursor.fetchall()
@@ -152,58 +120,49 @@ class SqlServerConnected(object):
         #    return result
         cursor.execute("select count(*) from table3")
         result = cursor.fetchone()
-        return result[0]
+        #27
+        print result[0]
 
     # 修改表
     def update_data(self):
         # 定义游标
         cursor = self.client.cursor()
 
-        cursor.execute("USE test_db")
-
         cursor.execute("update table3 set p_name='data_new' where p_id=1027")
-
-        cursor.execute("commit")
 
         cursor.execute("select p_name from table3 where p_id=1027")
 
         result = cursor.fetchone()
-        return result[0]
+        #data_new
+        print result[0]
 
     # 删除表
     def delete_table(self):
         # 定义游标
         cursor = self.client.cursor()
 
-        cursor.execute("USE test_db")
-
         cursor.execute("delete from  table3  where p_id=1027")
-
-        cursor.execute("commit")
 
         cursor.execute("select count(*) from table3")
 
         result = cursor.fetchone()
-        return result[0]
+        #26
+        print result[0]
 
     # 删除表及测试数据库
     def delete_all_data(self):
         # 定义游标
         cursor = self.client.cursor()
 
-        cursor.execute("drop table test_db.table3")
-
-        cursor.execute("Drop database test_db")
-
-        result = cursor.execute("commit")
-
-        return result
+        result = cursor.execute("drop table table3")
+        #None
+        print result
 
     # 关闭连接
     def close_conn(self):
         result = self.client.close()
-
-        return result
+        #None
+        print result
 
 
 if __name__ == '__main__':
@@ -212,6 +171,14 @@ if __name__ == '__main__':
     port = 5432
     username = ""
     password = ""
-    database = "test"
+    database = "mytest"
 
     mssql_con = SqlServerConnected(host=host, port=port, password=password, username=username, database=database)
+
+    mssql_con.create_table()
+    mssql_con.insert_data_to_table()
+    mssql_con.get_data()
+    mssql_con.update_data()
+    mssql_con.delete_table()
+    mssql_con.delete_all_data()
+    mssql_con.close_conn()
