@@ -49,7 +49,6 @@ tar -zxvf $pymssql_tar
 
 # pip 安装
 pip install $redis_need && \
-pip install psycopg2-binary && \
 pip install cx_Oracle && \
 pip install requests
 
