@@ -69,5 +69,5 @@ cd $base_dir/$hbase_tar_c && python setup.py install && \
 cd $base_dir/$pymssql_cli &&  python setup.py install && \
 
 cd $base_dir && pip install $psql_cli && \
-cd $base_dir/$pymysql_cli && python setup.py install
+cd $base_dir/$pymysql_cli && python setup.py install && \
 cd $base_dir && pip install $cx_Oracle_cli
