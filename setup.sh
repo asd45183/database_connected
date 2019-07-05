@@ -33,6 +33,7 @@ pymssql_tar="pymssql-2.1.4.tar.gz"
 pymssql_cli="pymssql-2.1.4"
 pymysql_tar="PyMySQL-0.9.3.tar.gz"
 pymysql_cli="PyMySQL-0.9.3"
+cx_Oracle_cli="cx_Oracle-7.1.3-cp27-cp27mu-manylinux1_x86_64.whl"
 # 安装依赖 pytest
 source activate python2.7 && pip install pytest
 
@@ -69,3 +70,4 @@ cd $base_dir/$pymssql_cli &&  python setup.py install && \
 
 cd $base_dir && pip install $psql_cli && \
 cd $base_dir/$pymysql_cli && python setup.py install
+cd $base_dir && pip install $cx_Oracle_cli
