@@ -215,6 +215,13 @@ class MySQLConnected(object):
 
         return result
 
+    def check_tde(self):
+        cursor = self.client.cursor()
+        # open tde
+        cursor.execute("alter table table3 engine=innodb, block_format=encrypted")
+        # close tde
+        cursor.execute("alter table table3 engine=innodb, block_format=default")
+
 
 if __name__ == '__main__':
     # 初始化数据
