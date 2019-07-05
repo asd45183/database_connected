@@ -31,7 +31,8 @@ hbase_tar_1_c="thrift-0.11.0"
 psql_cli="psycopg2_binary-2.7.3.2-cp27-cp27mu-manylinux1_x86_64.whl"
 pymssql_tar="pymssql-2.1.4.tar.gz"
 pymssql_cli="pymssql-2.1.4"
-
+pymysql_tar="PyMySQL-0.9.3.tar.gz"
+pymysql_cli="PyMySQL-0.9.3"
 # 安装依赖 pytest
 source activate python2.7 && pip install pytest
 
@@ -44,7 +45,8 @@ tar -zxvf $redis_tar && \
 tar -xvf $memcache_need && \
 tar -zxvf $hbase_tar && \
 tar -zxvf $hbase_tar_1 &&\
-tar -zxvf $pymssql_tar
+tar -zxvf $pymssql_tar &&\
+tar -zxvf $pymysql_tar
 
 
 # pip 安装
@@ -65,4 +67,5 @@ cd $base_dir/$hbase_tar_c && python setup.py install && \
 
 cd $base_dir/$pymssql_cli &&  python setup.py install && \
 
-cd $base_dir && pip install $psql_cli
+cd $base_dir && pip install $psql_cli && \
+cd $base_dir/$pymysql_cli && python setup.py install
