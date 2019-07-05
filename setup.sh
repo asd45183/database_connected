@@ -59,9 +59,9 @@ cd $base_dir/$redis_py_tar/ && python setup.py install && \
 
 cd $base_dir/$memcache_tar && python setup.py install && \
 
-cd $base_dir/$hbase_tar_c && python setup.py install && \
-
 cd $base_dir/$hbase_tar_1_c && python setup.py install && \
+
+cd $base_dir/$hbase_tar_c && python setup.py install && \
 
 cd $base_dir/$pymssql_cli &&  python setup.py install && \
 
