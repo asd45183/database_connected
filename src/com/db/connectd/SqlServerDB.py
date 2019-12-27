@@ -17,9 +17,9 @@ Python 操作SQLServer 需要使用 pymssql 模块，使用pip install pymssql�
 """
 # 需要创建一个数据库
 
-import sys
+import sys,time
 
-# reload(sys)
+reload(sys)
 sys.setdefaultencoding('utf8')
 import pymssql
 
@@ -27,7 +27,7 @@ import pymssql
 class SqlServerConnected(object):
 
     def __init__(self, host="", port=5432, username="", password="", database="mytest"):
-        self.client = pymssql.connect(server=host, port=port, user=username, password=password, database=database)
+        self.client = pymssql.connect(server=host, port=port, user=username, password=password, database=database,autocommit=True)
 
     # 创建测试表
     def create_table(self):
@@ -35,15 +35,15 @@ class SqlServerConnected(object):
         cursor = self.client.cursor()
         # 执行SQL
         result = cursor.execute("create table table3("
-                                "p_id int primary key,"
+                                "p_id varchar(20) primary key,"
                                 "p_name varchar(20) NOT NULL,"
                                 "p_sex varchar(10),"
                                 "CreateTime datetime NULL DEFAULT CURRENT_TIMESTAMP)"
                                 )
 
-        cursor.execute("commit")
+
         # None
-        return result
+        print result
 
     # 插入数据
     def insert_data_to_table(self):
@@ -52,44 +52,62 @@ class SqlServerConnected(object):
 
         # 定义插入数据列表
         sql_list = [
-            "Insert into table3 (p_id,p_name,p_sex) values (1001,'a1a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1002,'a2a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1003,'a3a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1004,'a4a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1005,'a5a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1006,'a6a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1007,'a7a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1008,'a8a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1009,'a9a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1010,'a10a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1011,'a11a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1012,'a12a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1013,'a13a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1014,'a14a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1015,'a15a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1016,'a16a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1017,'a17a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1018,'a18a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1019,'a19a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1020,'a20a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1021,'a21a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1022,'a22a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1023,'a23a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1024,'a24a','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1026,'张张','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1025,'张张','zz')",
-            "Insert into table3 (p_id,p_name,p_sex) values (1027,'饕餮','zz')"
+            "Insert into table3 (p_id,p_name,p_sex) values ('1001','a1a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1002','a2a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1003','a3a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1004','a4a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1005','a5a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1006','a6a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1007','a7a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1008','a8a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1009','a9a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1010','a10a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1011','a11a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1012','a12a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1013','a13a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1014','a14a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1015','a15a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1016','a16a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1017','a17a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1018','a18a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1019','a19a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1020','a20a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1021','a21a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1022','a22a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1023','a23a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1024','a24a','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1026','张张','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1025','张张','zz')",
+            "Insert into table3 (p_id,p_name,p_sex) values ('1027','饕餮','zz')"
         ]
 
         for sql in sql_list:
             cursor.execute(sql)
-        # cursor.execute("commit")
+        #cursor.execute("commit")
 
         cursor.execute("select count(*) from table3")
 
         result = cursor.fetchone()
-        # 27
-        return result[0]
+        #27
+        print result[0]
+
+    # 插入数据
+    def insert_table(self,counts):
+        # 创建数据操作游标
+        cursor = self.client.cursor()
+        for count in range(1,counts):
+            print ("Start test ....................")
+            sql_insert = "Insert into table3 (p_id,p_name,p_sex) values (" + str(count) +",'test_data_"+str(count)+"','zz')"
+            print sql_insert
+            print ("Start insert ....................")
+            cursor.execute(sql_insert)
+            print ("Query insert ....................")
+            cursor.execute("Select count(1) from table3")
+            result=cursor.fetchone()
+            assert result[0]==count,"Insert Fail......"
+            print ("End test ....................")
+            print count
+
 
     # 查询数据
     def get_data(self):
@@ -117,11 +135,11 @@ class SqlServerConnected(object):
         # for row in result_list:
         #    result = ("p_id=%d, p_name=%s, p_sex=%s, CreateTime=%s" % (row[0], row[1], row[2], row[3]))
 
-        #    return result
+        #    print result
         cursor.execute("select count(*) from table3")
         result = cursor.fetchone()
-        # 27
-        return result[0]
+        #27
+        print result[0]
 
     # 修改表
     def update_data(self):
@@ -133,11 +151,11 @@ class SqlServerConnected(object):
         cursor.execute("select p_name from table3 where p_id=1027")
 
         result = cursor.fetchone()
-        # data_new
-        return result[0]
+        #data_new
+        print result[0]
 
     # 删除表
-    def delete_data(self):
+    def delete_table(self):
         # 定义游标
         cursor = self.client.cursor()
 
@@ -146,23 +164,23 @@ class SqlServerConnected(object):
         cursor.execute("select count(*) from table3")
 
         result = cursor.fetchone()
-        # 26
-        return result[0]
+        #26
+        print result[0]
 
-    # 删除表
-    def delete_table(self):
+    # 删除表及测试数据库
+    def delete_all_data(self):
         # 定义游标
         cursor = self.client.cursor()
 
         result = cursor.execute("drop table table3")
-        # None
-        return result
+        #None
+        print result
 
     # 关闭连接
     def close_conn(self):
         result = self.client.close()
-        # None
-        return result
+        #None
+        print result
 
 
 if __name__ == '__main__':
@@ -176,9 +194,4 @@ if __name__ == '__main__':
     mssql_con = SqlServerConnected(host=host, port=port, password=password, username=username, database=database)
 
     mssql_con.create_table()
-    mssql_con.insert_data_to_table()
-    mssql_con.get_data()
-    mssql_con.update_data()
-    mssql_con.delete_data()
-    mssql_con.delete_table()
-    mssql_con.close_conn()
+    mssql_con.insert_table(1200)
