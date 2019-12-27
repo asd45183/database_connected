@@ -40,7 +40,7 @@ Cython_tar='Cython-0.29.13.tar.gz'
 Cython_cli='Cython-0.29.13'
 setuptools_git='setuptools_git-1.2-py2.py3-none-any.whl'
 instantclient_zip='instantclient-basiclite-linux.x64-11.2.0.4.0.zip'
-instantclient='instantclient-basiclite-linux.x64-11.2'
+instantclient='instantclient_11_2'
 # 安装依赖 pytest
 # source activate python2.7 && pip install pytest
 
@@ -64,7 +64,9 @@ pip install $redis_need && \
 cd $base_dir && pip install $setuptools_git && \
 # pip install requests
 ### 安装pymsql
-yum install python-dev*
+yum install -y gcc python-devel && \
+echo "......"
+echo "......"
 # 安装依赖 mongo, redis,  memcache, hbase,
 cd $base_dir/$pymongo_client/ && python setup.py install && \
 
@@ -77,6 +79,12 @@ cd $base_dir && pip install $psql_cli && \
 cd $base_dir/$pymysql_cli && python setup.py install && \
 
 echo "配置 oracle --start"
+# 安装Cython
+cd $base_dir/$Cython_cli && python setup.py install && \
+
+echo "......"
+
+echo "......"
 
 cd $base_dir && pip install $cx_Oracle_cli && \
 
@@ -84,19 +92,27 @@ cd $base_dir && pip install $setuptools_git && \
 
 cd $base_dir && unzip $instantclient_zip && \
 
-mkdir -p mkdir /opt/oracle && cp -r $instantclient /opt/oracle && \
+echo "......"
+
+echo "......"
+
+mkdir -p  /opt/oracle && cp -r $instantclient /opt/oracle/ && \
 
 sudo sh -c "echo /opt/oracle/instantclient_11_2 > /etc/ld.so.conf.d/oracle-instantclient.conf" && \
 
 sudo ldconfig && echo "配置 oracle --end"  && \
+
+echo "......"
+
+echo "......"
+
 
 
 # cd $base_dir/$hbase_tar_1_c && python setup.py install && \
 
 # cd $base_dir/$hbase_tar_c && python setup.py install && \
 
-# 安装Cython
-cd $base_dir/$Cython_cli && python setup.py install && \
+# 安装tsql
 
 cd $base_dir/$unixODBC_cli && \
 
@@ -108,9 +124,11 @@ echo "...."
 
 cd $base_dir/$tsql_cli/ && \
 
-./configure && \
+./configure --prefix=/usr/local/freetds && \
 
 make && make install
+
+ln -s /usr/local/freetds/bin/tsql /usr/bin/tsql
 
 echo "......"
 echo "......"
@@ -127,6 +145,14 @@ else
 	echo "ERROR , tsql 安装失败，请检查"
 fi
 
-cd $base_dir/$pymssql_cli &&  python setup.py install && \
+echo "......"
 
-ehcho "exit..."
+echo "......"
+sudo sh -c "echo /usr/local/freetds/lib/ > /etc/ld.so.conf.d/freetds-libraries.conf"
+sudo ldconfig && echo "配置 oracle --end"  && \
+
+echo "......"
+
+echo "......"
+cd $base_dir/$pymssql_cli &&  python setup.py install && \
+echo "exit..."
