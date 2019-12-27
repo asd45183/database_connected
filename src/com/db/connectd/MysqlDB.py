@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # author:Me.D
-import sys
-
+import sys,re,time
 reload(sys)
 sys.setdefaultencoding('utf8')
 import pymysql
@@ -10,7 +9,7 @@ import pymysql
 
 class MySQLConnected(object):
 
-    def __init__(self, host="", port=3306, username="", password="", database="", charset="utf8"):
+    def __init__(self, host="", port=3306, username="", password="",  charset="utf8", database="mytest"):
         # 初始化参数
         self.host = host
         self.port = port
@@ -20,43 +19,30 @@ class MySQLConnected(object):
         self.charset = charset
 
         # 定义连接端
-        self.client = pymysql.connect(database=self.database, user=self.username, passwd=self.password,
-                                      host=self.host, port=self.port, charset=self.charset)
+        self.client = pymysql.connect(user=self.username, passwd=self.password,host=self.host, port=self.port, charset=self.charset, autocommit=True,connect_timeout=10)
+        self.__create_database(database)
 
-    # 创建一个测试库：test_db
-    def create_database(self):
+        time.sleep(0.2)
+        print("reset connect .............")
+        # 定义连接端
+        self.client = pymysql.connect(host=self.host, port=self.port, user=self.username, passwd=self.password,database=database,
+                                       charset=self.charset, autocommit=True,connect_timeout=10)
+    def __create_database(self, database):
         # 创建数据操作游标
-        cursor = self.client.cursor()
-
+        cursor =self.client.cursor()
         # 执行SQL
-        result = cursor.execute("CREATE DATABASE test_db default charset utf8 COLLATE utf8_general_ci;")
+        print "配置数据库，5 S 后开始执行，若该库已存在则删除......"
 
-        """
-        举个例子:cursor是我们连接数据库的实例
-
-        fetchone()的使用:
-        
-        cursor.execute(select username,password,nickname from user where id='%s'  %(input)
-        
-        result=cursor.fetchone();  此时我们可以通过result[0],result[1],result[2]得到username,password,nickname
-        
-        fetchall()的使用:
-        
-        cursor.execute(select * from user)
-        
-        result=cursor.fetchall();此时select得到的可能是多行记录,那么我们通过fetchall得到的就是多行记录,是一个二维元组
-        
-        ((username1,password1,nickname1),(username2,password2,nickname2),(username3,password3,nickname))
-        """
-        return result
-        cursor.close()
+        time.sleep(5)
+        print("start .............")
+        cursor.execute("drop database if exists" + database)
+        cursor.execute("CREATE DATABASE " + database + " default charset utf8 COLLATE utf8_general_ci")
 
     # 创建测试表
     def create_table(self):
         # 创建数据操作游标
         cursor = self.client.cursor()
         # 执行SQL
-        cursor.execute("USE test_db")
 
         cursor.execute("DROP TABLE IF EXISTS table3")
 
@@ -68,15 +54,13 @@ class MySQLConnected(object):
             "CreateTime datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间')"
             " ENGINE  =  INNODB    DEFAULT  CHARSET  =  utf8mb4 "
         )
-        cursor.execute("commit")
+        #cursor.execute("commit")
         cursor.close()
-        return result
+        print result
 
     def insert_data_to_table(self):
         # 创建数据操作游标
         cursor = self.client.cursor()
-
-        cursor.execute("USE test_db")
 
         # 定义插入数据列表
         sql_list = [
@@ -110,14 +94,37 @@ class MySQLConnected(object):
         ]
 
         for sql in sql_list:
+            print ("Start insert .........")
             cursor.execute(sql)
-        cursor.execute("commit")
-
+            print ("Start endINsert .........")
+        print ("Start check .........")
         cursor.execute("select count(*) from table3")
-
         result = cursor.fetchone()
 
-        return result[0]
+        assert result[0] == 27, "Insert Fail......"
+
+    def insert_multi_data(self, counts):
+        cursor = self.client.cursor()
+        # create new table
+        cursor.execute(
+            "create table table4("
+            "p_id int AUTO_INCREMENT PRIMARY KEY,"
+            "p_name varchar(20) NOT NULL,"
+            "p_sex varchar(10),"
+            "CreateTime datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间')"
+            " ENGINE  =  INNODB    DEFAULT  CHARSET  =  utf8mb4 ")
+
+        for count in range(1, counts):
+            sql_insert = "Insert into table4 (p_name,p_sex) values ('test_data_"+str(count)+"','zz')"
+            print("prepare insert: " + sql_insert)
+            cursor.execute(sql_insert)
+            print ("prepare to check sql have been inserted....")
+            cursor.execute("select count(p_id) from table4")
+            query_result = cursor.fetchone()[0]
+            assert query_result == count, "Insert error,please check.... "
+            print ("Insert Success , data number is: " + str(query_result))
+            time.sleep(0.1)
+
 
     # 查询数据
     def get_data(self):
@@ -138,87 +145,84 @@ class MySQLConnected(object):
         # 创建数据操作游标
         cursor = self.client.cursor()
 
-        cursor.execute("USE test_db")
-
         cursor.execute("select count(*) from table3")
 
         result = cursor.fetchone()
 
         # 数据应被删除，所以返回结果即可
-        return result[0]
+        print result[0]
 
         # result_list = cursor.fetchall()
 
     """
         for row in result:
-            return ("p_id=" + str(row[0]) + "p_name=" + str(row[1]) + "p_sex=" + str(
+            print ("p_id=" + str(row[0]) + "p_name=" + str(row[1]) + "p_sex=" + str(
                 row[2]) + "CreateTime=" + str(row[3]))
 """
 
     #  for row in result_list:
     #      result = ("p_id=%d, p_name=%s, p_sex=%s, CreateTime=%s" % (row[0], row[1], row[2], row[3]))
     #
-    #     return result
+    #     print result
 
     # 修改表
     def update_data(self):
         # 定义游标
         cursor = self.client.cursor()
 
-        cursor.execute("USE test_db")
-
         cursor.execute("update table3 set p_name='data_new' where p_id=1027")
 
-        cursor.execute("commit")
+        #cursor.execute("commit")
 
         cursor.execute("select p_name from table3 where p_id=1027")
 
         result = cursor.fetchone()
 
         # 返回修改后的值，1 表示第二个值 即 p_name
-        return result[0]
+        print result[0]
 
     # 删除表中内容
     def delete_table(self):
         # 定义游标
         cursor = self.client.cursor()
 
-        cursor.execute("USE test_db")
-
         cursor.execute("delete from  table3  where p_id=1027")
 
-        cursor.execute("commit")
+        #cursor.execute("commit")
 
         cursor.execute("select count(* ) from table3 ")
 
         result = cursor.fetchone()
 
         # 数据应被删除，所以返回结果即可
-        return result[0]
+        print result[0]
 
     # 删除表及测试数据库
     def delete_all_data(self):
         # 定义游标
         cursor = self.client.cursor()
-
-        # cursor.execute("drop table test_db.table3")
-
-        result = cursor.execute("Drop database test_db")
-
-        # result = cursor.execute("commit")
-
-        return result
+        result = cursor.execute("Drop database" + database)
+        print result
 
     # 关闭连接
     def close_conn(self):
         result = self.client.close()
 
-        return result
+        print result
 
+    def check_tde(self):
+        cursor = self.client.cursor()
+        # open tde
+        cursor.execute("alter table table3 engine=innodb, block_format=encrypted")
+        cursor.execute("show create table table3")
+        result = str(cursor.fetchall())
+        print result
+        assert re.search(r'ENCRYPTED', result), 'TDE没有开启'
+# 创建一个测试库：test_db
 
 
 if __name__ == '__main__':
-    # 初始化数据
+    # 初始化数据,请使用高权限账号
     host = "127.0.0.1"
     port = 3306
     username = "root"
@@ -229,5 +233,8 @@ if __name__ == '__main__':
     # 初始化对象
     my_con = MySQLConnected(host=host, port=port, username=username, password=password, database=database,
                             charset=charset)
-
+    my_con.create_table()
+    my_con.get_data()
+    my_con.update_data()
+    my_con.get_data()
     my_con.delete_all_data()
